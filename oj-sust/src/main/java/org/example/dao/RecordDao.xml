@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--        //    u_name varchar(50) not null,-->
+<!--        //    q_id int not null,-->
+<!--        //    result int not null,-->
+<!--        //    time varchar(100) not null-->
+<mapper namespace="org.example.dao.RecordDao">
+    <insert id="insertRecord" >
+        insert into record values (#{u_name}, #{q_id}, #{result}, #{time})
+    </insert>
+
+    <select id="selectRecordByName" resultType="Record">
+        select * from record where u_name = #{u_name}
+    </select>
+
+    <select id="selectRecordByNameAndId" resultType="Record">
+        select * from record where u_name = #{u_name} and q_id = #{q_id}
+    </select>
+</mapper>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>易OJ, 多人在线oj平台</title>
+    <meta name="description" content="Charcoal is a free Bootstrap 4 UI kit build by @attacomsian at Wired Dots." />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Bootstrap 4-->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+<!--    <script type="text/javascript" src="js/jquery-3.4.1.js" ></script>-->
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top sticky-navigation">
+    <a class="navbar-brand font-weight-bold" href="#">易OJ</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topMenu" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="topMenu">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+                <a class="nav-link page-scroll" id="info" href="#brand-colors">{{user.name}}&nbsp;&nbsp;你好<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="theme-components" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    菜单
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="theme-components">
+                    <a class="dropdown-item page-scroll" href="changePassword.html">修改密码</a>
+                    <a class="dropdown-item page-scroll" href="function.html">返回主页</a>
+                    <a class="dropdown-item page-scroll" href="history.html">答题记录</a>
+                    <a class="dropdown-item page-scroll" href="addProblem.html">添加题目</a>
+                    <a class="dropdown-item page-scroll" href="switch.html">切换账号</a>
+                    <a class="dropdown-item page-scroll" href="/oj/signOut.do">退出登录</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!--components-->
+<section class="my-5 pt-5" id="app">
+    <div class="container">
+        <!-- 表示题目列表页 -->
+        <div class="row mb-5" id="tables">
+            <div class="col-sm-12">
+                <div class="mt-3 mb-5" width="100%">
+                    <h3>
+                        答题记录
+                    </h3>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>题目id</th>
+                            <th>提交结果</th>
+                            <th>答题时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="register in registers">
+                            <td>{{register.q_id}}</td>
+                            <td>{{register.result}}</td>
+                            <td>{{register.time}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--footer-->
+<section class="py-5 bg-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3 col-sm-8 offset-sm-2 col-xs-12 text-center">
+                <!-- <h3>Upgrade to Pro Version</h3>
+                <p class="pt-2">
+                    We are working on <b>Charcoal Pro</b> which will be released soon. The pro version
+                    will have a lot more components, sections, icons, plugins and example pages.
+                    Join the waiting list to get notified when we release it (plus discount code).
+                </p>
+                <a class="btn btn-warning" href="https://wireddots.com/newsletter">Join Waiting List</a>
+                <hr class="my-5"/> -->
+                <p class="pt-2 text-muted">
+                    &copy; 版权所有&nbsp;SUST&nbsp;张嘉斌
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+<script src="js/app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/ace/1.2.9/ace.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/ace/1.2.9/ext-language_tools.js"></script>
+<script>
+    var app = new Vue({
+        // #app CSS 中的 id 选择器
+        el: '#app',
+        data: {
+            registers: [
+
+            ],
+            // 当前用户选中的题目
+            register: {
+            }
+        },
+        methods: {
+            getRegisters() {
+                // jquery 这个库发送 ajax 请求的方式
+                $.ajax({
+                    url: '/oj/queryRegister.do',
+                    type: 'get',
+                    success: function (data) {
+                        app.registers = data;
+                    }
+                })
+            },
+        }
+    });
+    app.getRegisters();
+
+    var info = new Vue({
+        el: '#info',
+        data:{
+            user: {name:""}
+        },
+        methods: {
+            getUser() {
+                $.ajax({
+                    url:'/oj/getUser.do',
+                    type: 'get',
+                    success: function (data) {
+                        info.user = data;
+                    }
+                })
+            }
+        }
+    });
+    info.getUser();
+
+    // ace.js 的代码一定要放到 vue 的代码的后面.
+    // 否则 ace.js 会受到 vue 的干扰就不生效了
+    // 此处参数的 editor 就对应到上面的 <div id="editor">
+    let editor = ace.edit("editor");
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true
+    });
+    editor.setTheme("ace/theme/twilight");
+    editor.session.setMode("ace/mode/java");
+    editor.resize();
+    document.getElementById('editor').style.fontSize = '20px';
+</script>
+</body>
+</html>
